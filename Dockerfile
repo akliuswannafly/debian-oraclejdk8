@@ -13,4 +13,4 @@ RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | te
     && echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections \
     && apt-get install -y --force-yes oracle-java8-installer oracle-java8-set-default unzip procps net-tools
 
-RUN echo "Asia/Harbin" > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdat
+RUN echo "Asia/Harbin" > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
