@@ -14,7 +14,7 @@ RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | te
     && apt-get update -y && apt-get install -y wget \
     && wget http://www.dotdeb.org/dotdeb.gpg \
     && apt-key add dotdeb.gpg \
-    && apt-get update -y && \
+    && apt-get update -y \
     && echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections \
     && echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections \
     && apt-get install -y --force-yes oracle-java8-installer oracle-java8-set-default unzip procps net-tools mongodb-org redis-server redis-tools
