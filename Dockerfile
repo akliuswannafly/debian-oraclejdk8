@@ -9,8 +9,8 @@ RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | te
     && echo "deb http://packages.dotdeb.org wheezy all" | tee -a /etc/apt/sources.list.d/dotdeb.list \
     && echo "deb-src http://packages.dotdeb.org wheezy all" | tee -a /etc/apt/sources.list.d/dotdeb.list \
     && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 \
-    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 99E82A75642AC823 && \
-    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 && \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 99E82A75642AC823 \
+    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 \
     && apt-get install -f && rm -rf /var/lib/apt/lists/* \
     && apt-get update -y && apt-get install -y wget \
     && wget http://www.dotdeb.org/dotdeb.gpg \
