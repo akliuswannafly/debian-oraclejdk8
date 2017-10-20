@@ -2,12 +2,26 @@
 # with oracle-jdk8 sbt redis mongo net-tools procps installed
 
 FROM debian:7
-RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee /etc/apt/sources.list.d/webupd8team-java.list \
-    && echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list \
-    && echo "deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list \
+MAINTAINER Apollos
+
+# install oracle-jdk8
+RUN mkdir -p /home/java
+ADD ./jdk-8u151-linux-x64.tar.gz /home/java/
+ENV JAVA_VERSION="1.8"
+ENV JAVA_HOME=/home/java/jdk1.8.0_151
+ENV JRE_HOME=${JAVA_HOME}/jre
+ENV CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
+ENV PATH=${JAVA_HOME}/bin:${JRE_HOME}/bin:$PATH
+
+# copy ivy2 cache lib and sbt-launch.jar to docker
+COPY ./sbt-launch.jar /var
+COPY ./cache.zip /root
+
+# install sbt redis mongo unzip net-tools procps
+# config timezone
+RUN echo "deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list \
     && echo "deb http://packages.dotdeb.org wheezy all" | tee -a /etc/apt/sources.list.d/dotdeb.list \
     && echo "deb-src http://packages.dotdeb.org wheezy all" | tee -a /etc/apt/sources.list.d/dotdeb.list \
-    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 \
     && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 99E82A75642AC823 \
     && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927 \
     && apt-get install -f && rm -rf /var/lib/apt/lists/* \
@@ -15,20 +29,10 @@ RUN echo "deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main" | te
     && wget http://www.dotdeb.org/dotdeb.gpg \
     && apt-key add dotdeb.gpg \
     && apt-get update -y \
-    && echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections \
-    && echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections \
-    && apt-get install -y --force-yes oracle-java8-installer oracle-java8-set-default unzip procps net-tools mongodb-org redis-server redis-tools
-
-# install sbt
-RUN wget -c 'http://repo1.maven.org/maven2/org/scala-sbt/sbt-launch/1.0.0-M4/sbt-launch.jar' \
-    && mv sbt-launch.jar /var \
+    && apt-get install -y --force-yes unzip procps net-tools mongodb-org redis-server redis-tools \
     && echo '#!/bin/bash' > /usr/bin/sbt \
-    && echo 'java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=256M -jar /var/sbt-launch.jar "$@"' >> /usr/bin/sbt \
-    && chmod u+x /usr/bin/sbt
-
-# copy ivy2 cache lib to docker
-COPY ./cache.zip /root
-RUN cd /root && unzip cache.zip && mkdir -p /root/.ivy2 && mv /root/cache /root/.ivy2
-
-# config timezone
-RUN echo "Asia/Harbin" > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
+    && echo 'java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -jar /var/sbt-launch.jar "$@"' >> /usr/bin/sbt \
+    && chmod u+x /usr/bin/sbt \
+    && cd /root && unzip cache.zip && mkdir -p /root/.ivy2 && mv /root/cache /root/.ivy2 \
+    && echo "Asia/Harbin" > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata \
+    && rm /root/cache.zip
