@@ -35,8 +35,10 @@ RUN echo "deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main" | 
     && chmod u+x /usr/bin/sbt \
     && cd /root && unzip cache.zip && mkdir -p /root/.ivy2 && mv /root/cache /root/.ivy2 \
     && echo "Asia/Harbin" > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata \
-    && rm /root/cache.zip
+    && rm /root/cache.zip \
+    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+    && locale-gen en_US.UTF-8 \
+    && dpkg-reconfigure locales \
+    && /usr/sbin/update-locale LANG=en_US.UTF-8
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
