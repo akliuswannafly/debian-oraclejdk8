@@ -29,16 +29,15 @@ RUN echo "deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main" | 
     && wget http://www.dotdeb.org/dotdeb.gpg \
     && apt-key add dotdeb.gpg \
     && apt-get update -y \
+    && echo "Asia/Harbin" > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata \
     && apt-get install -y --force-yes unzip procps net-tools mongodb-org redis-server redis-tools locales \
     && echo '#!/bin/bash' > /usr/bin/sbt \
     && echo 'java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -jar /var/sbt-launch.jar "$@"' >> /usr/bin/sbt \
     && chmod u+x /usr/bin/sbt \
     && cd /root && unzip cache.zip && mkdir -p /root/.ivy2 && mv /root/cache /root/.ivy2 \
-    && echo "Asia/Harbin" > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata \
     && rm /root/cache.zip \
-    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
     && locale-gen en_US.UTF-8 \
-    && dpkg-reconfigure locales \
-    && /usr/sbin/update-locale LANG=en_US.UTF-8
 
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
